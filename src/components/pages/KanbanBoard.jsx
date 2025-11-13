@@ -13,8 +13,18 @@ import { useProjects } from "@/hooks/useProjects";
 import { cn } from "@/utils/cn";
 
 const KanbanBoard = () => {
-  const { onEditTask, projects } = useOutletContext();
-  const { tasks, loading, error, loadTasks, updateTaskStatus, deleteTask } = useTasks();
+const { onEditTask, projects } = useOutletContext();
+  const { 
+    tasks, 
+    loading, 
+    error, 
+    loadTasks, 
+    updateTaskStatus, 
+    deleteTask,
+    createSubtask,
+    getSubtasks,
+    getMainTasks
+  } = useTasks();
   const [searchQuery, setSearchQuery] = useState("");
   const [filterProject, setFilterProject] = useState("");
   const [draggedTask, setDraggedTask] = useState(null);
@@ -26,8 +36,10 @@ const KanbanBoard = () => {
     { id: "done", title: "Done", icon: "CheckCircle", color: "bg-green-100" }
   ];
 
-  const filteredTasks = useMemo(() => {
-    return tasks.filter(task => {
+const filteredTasks = useMemo(() => {
+    // Get main tasks only for Kanban board
+    const mainTasks = getMainTasks();
+    return mainTasks.filter(task => {
       const matchesSearch = task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                            task.description.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesProject = !filterProject || task.projectId === filterProject;
@@ -194,12 +206,14 @@ const KanbanBoard = () => {
                       onDragStart={(e) => handleDragStart(e, task)}
                       onDragEnd={handleDragEnd}
                     >
-                      <TaskCard
+<TaskCard
                         task={task}
                         project={getTaskProject(task)}
                         onEdit={onEditTask}
                         onStatusChange={updateTaskStatus}
                         onDelete={deleteTask}
+                        onCreateSubtask={(taskId) => onEditTask(null, taskId)}
+                        subtasks={getSubtasks(task.Id)}
                         isDragging={draggedTask?.Id === task.Id}
                         className={cn(
                           "transition-all duration-200",

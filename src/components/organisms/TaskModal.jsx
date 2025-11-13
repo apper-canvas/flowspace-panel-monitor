@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { cn } from "@/utils/cn";
 import ApperIcon from "@/components/ApperIcon";
-import Button from "@/components/atoms/Button";
-import FormField from "@/components/molecules/FormField";
 import ProjectSelector from "@/components/molecules/ProjectSelector";
-import Label from "@/components/atoms/Label";
+import FormField from "@/components/molecules/FormField";
 import Select from "@/components/atoms/Select";
+import Label from "@/components/atoms/Label";
+import Button from "@/components/atoms/Button";
 
 const TaskModal = ({ 
   isOpen, 
@@ -13,15 +13,18 @@ const TaskModal = ({
   onSubmit, 
   task = null,
   projects = [],
-  title = "Create Task"
+  title = "Create Task",
+  parentTaskId = null,
+  onCreateSubtask = null
 }) => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    projectId: "",
+projectId: "",
     dueDate: "",
     priority: "medium",
-    status: "todo"
+    status: "todo",
+    parentTaskId: parentTaskId || null
   });
 
   const [errors, setErrors] = useState({});
@@ -35,7 +38,8 @@ const TaskModal = ({
         projectId: task.projectId || "",
         dueDate: task.dueDate ? new Date(task.dueDate).toISOString().split("T")[0] : "",
         priority: task.priority || "medium",
-        status: task.status || "todo"
+        status: task.status || "todo",
+        parentTaskId: parentTaskId || null
       });
     } else {
       setFormData({
@@ -44,7 +48,8 @@ const TaskModal = ({
         projectId: "",
         dueDate: "",
         priority: "medium",
-        status: "todo"
+        status: "todo",
+        parentTaskId: parentTaskId || null
       });
     }
     setErrors({});
@@ -119,7 +124,16 @@ const TaskModal = ({
         </div>
 
         {/* Form */}
-<form onSubmit={handleSubmit} className="p-6 space-y-6 max-h-[60vh] overflow-y-auto">
+<form onSubmit={handleSubmit} className="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
+        
+        {parentTaskId && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+            <div className="flex items-center gap-2 text-blue-700 text-sm">
+              <ApperIcon name="ArrowUpRight" size={16} />
+              <span className="font-medium">Creating subtask for parent task</span>
+            </div>
+          </div>
+        )}
           <FormField
             label="Task Title"
             id="title"

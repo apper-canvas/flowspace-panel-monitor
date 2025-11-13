@@ -148,7 +148,7 @@ const Dashboard = () => {
               </div>
             ) : (
               <div className="space-y-4">
-                {todaysTasks.map(task => (
+{todaysTasks.map(task => (
                   <TaskCard
                     key={task.Id}
                     task={task}
@@ -156,6 +156,8 @@ const Dashboard = () => {
                     onEdit={onEditTask}
                     onStatusChange={updateTaskStatus}
                     onDelete={deleteTask}
+                    onCreateSubtask={(taskId) => onEditTask(null, taskId)}
+                    subtasks={tasks.filter(t => t.parentTaskId === task.Id)}
                   />
                 ))}
               </div>

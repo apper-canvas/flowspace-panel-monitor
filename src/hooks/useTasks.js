@@ -21,7 +21,7 @@ export const useTasks = () => {
     }
   };
 
-  const createTask = async (taskData) => {
+const createTask = async (taskData) => {
     try {
       const newTask = await taskService.create(taskData);
       setTasks(prev => [...prev, newTask]);
@@ -29,6 +29,51 @@ export const useTasks = () => {
       return newTask;
     } catch (err) {
       toast.error("Failed to create task");
+      throw err;
+    }
+  };
+
+  const createSubtask = async (parentTaskId, subtaskData) => {
+    try {
+      const newSubtask = await taskService.createSubtask(parentTaskId, subtaskData);
+      setTasks(prev => [...prev, newSubtask]);
+      toast.success("Subtask created successfully!");
+      return newSubtask;
+    } catch (err) {
+      toast.error("Failed to create subtask");
+      throw err;
+    }
+  };
+
+  const getSubtasks = (parentTaskId) => {
+    return tasks.filter(task => task.parentTaskId === parseInt(parentTaskId));
+  };
+
+  const getMainTasks = () => {
+    return tasks.filter(task => !task.parentTaskId);
+  };
+
+  const updateSubtask = async (subtaskId, updates) => {
+    try {
+      const updatedSubtask = await taskService.update(subtaskId, updates);
+      setTasks(prev => prev.map(task => 
+        task.Id === subtaskId ? updatedSubtask : task
+      ));
+      toast.success("Subtask updated successfully!");
+      return updatedSubtask;
+    } catch (err) {
+      toast.error("Failed to update subtask");
+      throw err;
+    }
+  };
+
+  const deleteSubtask = async (subtaskId) => {
+    try {
+      await taskService.deleteSubtask(subtaskId);
+      setTasks(prev => prev.filter(task => task.Id !== subtaskId));
+      toast.success("Subtask deleted successfully!");
+    } catch (err) {
+      toast.error("Failed to delete subtask");
       throw err;
     }
   };
@@ -86,5 +131,21 @@ export const useTasks = () => {
     updateTask,
     deleteTask,
     updateTaskStatus
+};
+
+  return {
+    tasks,
+    loading,
+    error,
+    createTask,
+    createSubtask,
+    updateTask,
+    updateSubtask,
+    updateTaskStatus,
+    deleteTask,
+    deleteSubtask,
+    loadTasks,
+    getSubtasks,
+    getMainTasks
   };
 };

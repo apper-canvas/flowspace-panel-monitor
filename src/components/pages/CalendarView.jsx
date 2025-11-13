@@ -260,7 +260,7 @@ const CalendarView = () => {
               </div>
             ) : (
               <div className="space-y-3 max-h-96 overflow-y-auto">
-                {selectedDateTasks.map(task => (
+{selectedDateTasks.map(task => (
                   <TaskCard
                     key={task.Id}
                     task={task}
@@ -268,6 +268,8 @@ const CalendarView = () => {
                     onEdit={onEditTask}
                     onStatusChange={updateTaskStatus}
                     onDelete={deleteTask}
+                    onCreateSubtask={(taskId) => onEditTask(null, taskId)}
+                    subtasks={tasks.filter(t => t.parentTaskId === task.Id)}
                     className="shadow-sm"
                   />
                 ))}

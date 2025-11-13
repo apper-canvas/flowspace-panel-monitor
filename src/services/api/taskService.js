@@ -91,6 +91,56 @@ export const taskService = {
     return tasks.filter(task => 
       task.title.toLowerCase().includes(searchTerm) ||
       task.description.toLowerCase().includes(searchTerm)
-    ).map(task => ({ ...task }));
+).map(task => ({ ...task }));
+  },
+
+  // Subtask operations
+  async getSubtasks(parentTaskId) {
+    await delay();
+    return tasks.filter(task => task.parentTaskId === parseInt(parentTaskId)).map(task => ({ ...task }));
+  },
+
+  async createSubtask(parentTaskId, subtaskData) {
+    await delay();
+    const highestId = tasks.length > 0 ? Math.max(...tasks.map(t => t.Id)) : 0;
+    const newSubtask = {
+      Id: highestId + 1,
+      ...subtaskData,
+      parentTaskId: parseInt(parentTaskId),
+      createdAt: new Date().toISOString(),
+      completedAt: null,
+      attachments: [],
+      comments: [],
+      subtasks: []
+    };
+    tasks.push(newSubtask);
+    return { ...newSubtask };
+  },
+
+  async getMainTasks() {
+    await delay();
+    return tasks.filter(task => !task.parentTaskId).map(task => ({ ...task }));
+  },
+
+  async updateSubtaskStatus(subtaskId, status) {
+    await delay();
+    return this.update(subtaskId, { status });
+  },
+
+  async deleteSubtask(subtaskId) {
+    await delay();
+    return this.delete(subtaskId);
+  },
+
+  async getTaskWithSubtasks(taskId) {
+    await delay();
+    const mainTask = await this.getById(taskId);
+    if (!mainTask) return null;
+
+    const subtasks = await this.getSubtasks(taskId);
+    return {
+      ...mainTask,
+      subtasks
+    };
   }
 };

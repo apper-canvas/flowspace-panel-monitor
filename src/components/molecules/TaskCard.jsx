@@ -11,9 +11,11 @@ const TaskCard = ({
   onEdit, 
   onStatusChange, 
   onDelete,
+  onCreateSubtask,
+  subtasks = [],
   isDragging = false,
   className,
-  ...props 
+  ...props
 }) => {
   const getPriorityVariant = (priority) => {
     switch (priority) {
@@ -98,8 +100,19 @@ const TaskCard = ({
             )}
           </div>
         </div>
-
-        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          {!task.parentTaskId && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onCreateSubtask?.(task.Id);
+              }}
+              className="text-slate-400 hover:text-blue-500 transition-colors p-1"
+              title="Add subtask"
+            >
+              <ApperIcon name="Plus" size={14} />
+            </button>
+          )}
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -110,6 +123,34 @@ const TaskCard = ({
             <ApperIcon name="Trash2" size={14} />
           </button>
         </div>
+
+        {/* Subtasks Progress Indicator */}
+        {!task.parentTaskId && subtasks.length > 0 && (
+          <div className="mt-3 pt-3 border-t border-gray-100">
+            <div className="flex items-center gap-2 text-xs text-slate-600">
+              <ApperIcon name="CheckSquare" size={12} />
+              <span>
+                {subtasks.filter(s => s.status === 'done').length} / {subtasks.length} subtasks
+              </span>
+              <div className="flex-1 h-1.5 bg-gray-200 rounded-full ml-2">
+                <div 
+                  className="h-full bg-green-500 rounded-full transition-all duration-300"
+                  style={{ 
+                    width: `${subtasks.length > 0 ? (subtasks.filter(s => s.status === 'done').length / subtasks.length) * 100 : 0}%` 
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Parent Task Indicator */}
+        {task.parentTaskId && (
+          <div className="mt-2 flex items-center gap-1 text-xs text-slate-500">
+            <ApperIcon name="ArrowUpRight" size={12} />
+            <span>Subtask</span>
+          </div>
+        )}
       </div>
 
       {/* Footer */}
