@@ -122,21 +122,11 @@ const createTask = async (taskData) => {
     loadTasks();
   }, []);
 
-  return {
+return {
     tasks,
     loading,
     error,
     loadTasks,
-    createTask,
-    updateTask,
-    deleteTask,
-    updateTaskStatus
-};
-
-  return {
-    tasks,
-    loading,
-    error,
     createTask,
     createSubtask,
     updateTask,
@@ -144,7 +134,6 @@ const createTask = async (taskData) => {
     updateTaskStatus,
     deleteTask,
     deleteSubtask,
-    loadTasks,
     getSubtasks,
     getMainTasks
   };
