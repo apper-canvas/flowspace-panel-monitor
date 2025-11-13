@@ -119,7 +119,7 @@ const TaskModal = ({
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-6 overflow-y-auto">
+<form onSubmit={handleSubmit} className="p-6 space-y-6 max-h-[60vh] overflow-y-auto">
           <FormField
             label="Task Title"
             id="title"
